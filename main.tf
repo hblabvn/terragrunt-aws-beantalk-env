@@ -23,7 +23,6 @@ locals {
   app_name_notempty = "${var.namespace == "" ? "" : "${lower(var.namespace)}-"}${lower(var.project_env_short)}-${lower(var.app_name)}"
   app_name          = "${var.app_name == "" ? local.app_name_empty : local.app_name_notempty }"
   cf_ttl            = "${var.cf_proxied ? 1 : var.cf_ttl }"
-  cert_domain       = "${var.cert_domain == "" ? var.domain_name : var.cert_domain }"
   
 }
 
@@ -50,12 +49,6 @@ data "aws_security_group" "bastion" {
 
 data "aws_security_group" "elb" {
   tags = "${merge(var.source_elb_sg_tags, map("Env", "${var.project_env}"))}"
-}
-
-data "aws_acm_certificate" "cert" {
-  domain      = "${local.cert_domain}"
-  statuses    = ["ISSUED"]
-  most_recent = true
 }
 
 data "aws_route53_zone" "public" {
@@ -119,9 +112,7 @@ module "eb_env" {
   loadbalancer_type                   = "${var.loadbalancer_type}"
   loadbalancer_managed_security_group = "${data.aws_security_group.elb.id}"
   loadbalancer_security_groups        = "${compact(concat(list(data.aws_security_group.elb.id),var.loadbalancer_security_groups))}"
-  loadbalancer_certificate_arn        = "${data.aws_acm_certificate.cert.arn}"
-  loadbalancer_ssl_policy             = "${var.loadbalancer_ssl_policy}"
-  http_listener_enabled               = "${var.http_listener_enabled}"
+  http_listener_enabled               = "true"
   application_port                    = "${var.application_port}"
   healthcheck_url                     = "${var.healthcheck_url}"
   stickiness_enabled                  = "${var.stickiness_enabled}"

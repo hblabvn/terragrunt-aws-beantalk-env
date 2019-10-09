@@ -12,7 +12,6 @@ variable "source_elb_sg_tags" { default = { Type = "ALB" } }
 
 variable "domain_name" { default = "example.com" }
 variable "root_domain" { default = "example.com" }
-variable "cert_domain" { default = "" }
 variable "sub_dns_names" { default = ["www"] }
 variable "dns_management" {
   default = "route53"
@@ -145,16 +144,6 @@ variable "environment_type" {
 variable "loadbalancer_type" {
   default     = "application"
   description = "Load Balancer type, e.g. 'application' or 'classic'"
-}
-
-variable "loadbalancer_certificate_arn" {
-  default     = ""
-  description = "Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager"
-}
-
-variable "loadbalancer_ssl_policy" {
-  default     = "ELBSecurityPolicy-2016-08"
-  description = "Specify a security policy to apply to the listener. This option is only applicable to environments with an application load balancer."
 }
 
 variable "loadbalancer_security_groups" {
